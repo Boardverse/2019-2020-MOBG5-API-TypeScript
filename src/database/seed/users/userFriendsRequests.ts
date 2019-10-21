@@ -1,0 +1,20 @@
+import * as Sqlite3 from "sqlite3";
+
+export async function userFriendsRequests(database: Sqlite3.Database): Promise<void> {
+	return new Promise<void>((resolve, reject): void => {
+		database.run(
+			`CREATE TABLE IF NOT EXISTS userFriendsRequests (
+				userId						INTEGER NOT NULL,
+				userFriendUserId			INTEGER NOT NULL,
+				userFriendsRequestTimestamp	INTEGER NOT NULL,
+				PRIMARY KEY (userId, userFriendUserId)
+			);`,
+			{},
+			(err: Error) => {
+				if (err) {
+					reject(err);
+				}
+				resolve();
+			});
+	});
+}
