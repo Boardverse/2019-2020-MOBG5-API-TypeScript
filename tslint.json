@@ -1,12 +1,15 @@
 {
-    "defaultSeverity": "error",
+    "defaultSeverity": "warning",
     "extends": [
         "tslint:recommended"
     ],
     "jsRules": {},
     "rules": {
         "indent": [true, "tabs", 4],
-        "max-line-length": [false]
+        "interface-name": false,
+        "interface-over-type-literal": false,
+        "max-line-length": [false],
+        "no-shadowed-variable": false
     },
     "rulesDirectory": []
 }
