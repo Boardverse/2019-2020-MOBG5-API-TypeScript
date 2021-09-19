@@ -1,9 +1,7 @@
-out/
-node_modules/
+.nyc_output/
+.vscode/
+coverage/
 database.sqlite
-
 database.sqlite3
-
-index.html
-
-package-lock.json
+node_modules/
+out/

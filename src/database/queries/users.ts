@@ -66,7 +66,7 @@ export async function login(database: Sqlite3.Database, login: string, password:
 	return new Promise<{password: string, timestamp: number, userId: number}>((resolve, reject): void => {
 		database.get(
 			`
-			SELECT 	userPassword AS password,
+			SELECT	userPassword AS password,
 					userJoinedTimestamp AS timestamp,
 					userId
 			FROM users

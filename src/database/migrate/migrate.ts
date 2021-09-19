@@ -29,8 +29,8 @@ import { userReviews } from "./users/userReviews";
 import { users } from "./users/users";
 import { userWishlists } from "./users/userWhishlists";
 
-export async function seed(database: Sqlite3.Database): Promise<void> {
-	await games(database)
+export async function migrate(database: Sqlite3.Database): Promise<void> {
+	await			games(database)
 		.then(() => gameNames(database))
 		.then(() => gameDescriptions(database))
 		.then(() => gameTypes(database))

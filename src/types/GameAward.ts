@@ -1,4 +1,5 @@
 export interface GameAward {
-	name: string;
-	year: number;
+	gameAwardId: number;
+	gameAwardName: string;
+	gameAwardYear: number;
 }

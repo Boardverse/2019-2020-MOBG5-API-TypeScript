@@ -2,10 +2,12 @@ import * as bodyParser from "body-parser";
 import express, { NextFunction, Request, Response } from "express";
 import * as Sqlite3 from "sqlite3";
 
+import { migrate } from "./database/migrate/migrate";
 import {
-	game,
-	newGames,
-	popularGames,
+	getFullGame,
+	getGamesFreindsPlaying,
+	getNewGames,
+	getPopularGames,
 } from "./database/queries/games";
 import {
 	getLanguageId,
@@ -14,18 +16,17 @@ import {
 	logout,
 	register,
 } from "./database/queries/users";
-import { seed } from "./database/seed/seeder";
 import { Game } from "./types/Game";
 import { GameCategory } from "./types/GameCategory";
+import { GameGlobalReview } from "./types/GameGlobalReview";
 import { GameType } from "./types/GameType";
-import { GlobalReview } from "./types/GlobalReview";
 
 export const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 const database: Sqlite3.Database = new Sqlite3.Database("database.sqlite3", async (): Promise<void> => {
-	await seed(database);
+	await migrate(database);
 });
 
 const extractInfosMiddleware = async (request: Request, response: Response, next: NextFunction) => {
@@ -40,6 +41,10 @@ const extractInfosMiddleware = async (request: Request, response: Response, next
 
 	const languageId: number = (!!userId) ? (await getLanguageId(database, userId) || 1) : 1;
 	response.locals.languageId = languageId;
+
+	process.stdout.write(`TOKEN:\t\t${token}\n`);
+	process.stdout.write(`USERID:\t\t${userId}\n`);
+	process.stdout.write(`LANGUAGEID:\t${languageId}\n`);
 
 	return next();
 };
@@ -97,7 +102,7 @@ app.delete("/logout/", async (request: Request, response: Response, next: NextFu
 });
 
 app.get("/games/popular/", async (request: Request, response: Response, next: NextFunction) => {
-	popularGames(database, response.locals.languageId, response.locals.userId)
+	getPopularGames(database, response.locals.languageId, response.locals.userId)
 	.then((games: Game[]): void => {
 		response.json(games);
 	})
@@ -107,7 +112,7 @@ app.get("/games/popular/", async (request: Request, response: Response, next: Ne
 });
 
 app.get("/games/new/", async (request: Request, response: Response, next: NextFunction) => {
-	newGames(database, response.locals.languageId)
+	getNewGames(database, response.locals.languageId, response.locals.userId)
 	.then((games: Game[]): void => {
 		response.json(games);
 	})
@@ -117,7 +122,7 @@ app.get("/games/new/", async (request: Request, response: Response, next: NextFu
 });
 
 app.get("/games/freindsPlaying/", loginMiddleware, async (request: Request, response: Response, next: NextFunction) => {
-	freindsPlaying(database, response.locals.userId, response.locals.languageId)
+	getGamesFreindsPlaying(database, response.locals.userId, response.locals.languageId)
 	.then((games: Game[]): void => {
 		response.json(games);
 	})
@@ -126,6 +131,7 @@ app.get("/games/freindsPlaying/", loginMiddleware, async (request: Request, resp
 	});
 });
 
+/*
 app.get("/games/knownEditor/", loginMiddleware, async (request: Request, response: Response, next: NextFunction) => {
 	knownEditor(database, response.locals.userId, response.locals.languageId)
 	.then((games: Game[]): void => {
@@ -175,9 +181,10 @@ app.get("/games/types/:typeId/", loginMiddleware, async (request: Request, respo
 		response.json({error: err});
 	});
 });
+*/
 
 app.get("/games/:gameId/", async (request: Request, response: Response, next: NextFunction) => {
-	game(database, parseInt(request.params.gameId, 10), response.locals.languageId)
+	getFullGame(database, parseInt(request.params.gameId, 10), response.locals.languageId)
 	.then((game: Game): void => {
 		response.json(game);
 	})
@@ -186,6 +193,7 @@ app.get("/games/:gameId/", async (request: Request, response: Response, next: Ne
 	});
 });
 
+/*
 app.get("/games/:gameId/reviews/", async (request: Request, response: Response, next: NextFunction) => {
 	gameReviews(database, parseInt(request.params.gameId, 10))
 	.then((reviews: GlobalReview): void => {
@@ -280,7 +288,7 @@ app.route("/collection/:gameId/")
 	.delete(async (request: Request, response: Response, next: NextFunction) => {
 		return response.json();
 	});
-
+*/
 app.get("*", (request: Request, response: Response, next: NextFunction) => {
 	return response.json({error: "Not found"});
 });

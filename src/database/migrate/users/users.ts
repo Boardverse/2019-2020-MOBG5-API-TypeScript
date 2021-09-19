@@ -4,7 +4,7 @@ export async function users(database: Sqlite3.Database): Promise<void> {
 	return new Promise<void>((resolve, reject): void => {
 		database.run(
 			`CREATE TABLE IF NOT EXISTS users (
-				userId						INTEGER NOT NULL UNIQUE AUTOINCREMENT UNIQUE,
+				userId						INTEGER NOT NULL UNIQUE UNIQUE,
 				userName					TEXT NOT NULL UNIQUE,
 				userPassword				TEXT NOT NULL,
 				userJoinedTimestamp			INTEGER NOT NULL,

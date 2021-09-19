@@ -4,9 +4,9 @@ export async function languages(database: Sqlite3.Database): Promise<void> {
 	return new Promise<void>((resolve, reject): void => {
 		database.run(
 			`CREATE TABLE IF NOT EXISTS languages (
-				languageId				INTEGER NOT NULL,
-				languageIdInLanguageId	INTEGER NOT NULL,
-				languageName				TEXT,
+				languageId					INTEGER NOT NULL,
+				languageIdInLanguageId		INTEGER NOT NULL,
+				languageNameInLanguageId	TEXT,
 				PRIMARY KEY(languageId, languageIdInLanguageId)
 			);`,
 			{},

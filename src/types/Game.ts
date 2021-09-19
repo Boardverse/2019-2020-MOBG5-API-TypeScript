@@ -1,3 +1,4 @@
+import { GameAuthor } from "./GameAuthor";
 import { GameAward } from "./GameAward";
 import { GameCategory } from "./GameCategory";
 import { GamePicture } from "./GamePicture";
@@ -6,33 +7,34 @@ import { Language } from "./Language";
 import { Publisher } from "./Publisher";
 
 export interface Game {
-	id: number;
+	gameId: number;
 
-	name: string;
-	types: GameType[];
-	categories: GameCategory[];
+	gameName: string;
+	gameTypes: GameType[];
+	gameCategories: GameCategory[];
 
-	description: string;
-	score: number;
+	gameDescription: string;
+	gameScore: number;
 
-	thumbnailURL: string;
-	picturesURL: GamePicture[];
+	gameThumbnailURL: URL;
+	gamePicturesURL: GamePicture[];
 
-	publishers: Publisher[];
-	publishingDate: number;
+	gamePublishers: Publisher[];
+	gamePublishingDate: number;
+	gameAuthors: GameAuthor[];
 
-	minPlayers: number;
-	recommendedPlayers: number;
-	maxPlayers: number;
+	gameMinPlayers: number;
+	gameRecommendedPlayers: number;
+	gameMaxPlayers: number;
 
-	minDuration: number;
-	averageDuration: number;
-	maxDuration: number;
+	gameMinDuration: number;
+	gameAverageDuration: number;
+	gameMaxDuration: number;
 
-	minAge: number;
-	recommendedAge: number;
-	maxAge: number;
+	gameMinAge: number;
+	gameRecommendedAge: number;
+	gameMaxAge: number;
 
-	awards: GameAward[];
-	languages: Language[];
+	gameAwards: GameAward[];
+	gameLanguages: Language[];
 }

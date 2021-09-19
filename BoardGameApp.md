@@ -17,7 +17,7 @@
     * Catégories du jeu
     * Types de jeu
     * Score moyen du jeu
-    * Toutes les évaluations
+    * Toutes les évaluations ?
     * Evaluations récentes ?
   * Voir photos du jeu
   * Ajouter à collection / Retirer de collection
@@ -25,7 +25,8 @@
   * Voir amis qui possèdent le jeu
   * Voir amis qui aiment le jeu ?
   * Voir jeux du même éditeur (que je n'ai pas)
-  * Voir jeux du même genre
+  * Voir jeux du même type
+  * Voir jeux du même theme
   * Ceux qui ont ce jeu ont aussi (top classement, du même style?)
 
 * Profil

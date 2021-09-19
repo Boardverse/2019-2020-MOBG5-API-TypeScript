@@ -4,7 +4,7 @@ export async function gamePictures(database: Sqlite3.Database): Promise<void> {
 	return new Promise<void>((resolve, reject): void => {
 		database.run(
 			`CREATE TABLE IF NOT EXISTS gamePictures (
-				gamePictureId				INTEGER NOT NULL AUTOINCREMENT UNIQUE,
+				gamePictureId				INTEGER NOT NULL UNIQUE,
 				gameId						INTEGER NOT NULL,
 				gamePictureURL				TEXT,
 				PRIMARY KEY (gamePictureId)

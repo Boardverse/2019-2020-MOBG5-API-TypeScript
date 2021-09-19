@@ -6,7 +6,7 @@ export async function userAchievementsNames(database: Sqlite3.Database): Promise
 			`CREATE TABLE IF NOT EXISTS userAchievementsNames (
 				userAchievementsId			INTEGER NOT NULL,
 				languageId					INTEGER NOT NULL,
-				userAchievementsNames		TEXT,
+				userAchievementsName		TEXT,
 				PRIMARY KEY (userAchievementsId, languageId)
 			);`,
 			{},

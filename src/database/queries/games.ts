@@ -10,9 +10,15 @@ import { Publisher } from "../../types/Publisher";
 
 import * as Statements from "../statements/statements";
 
-export async function game(database: Sqlite3.Database, gameId: number, languageId: number = 1): Promise<Game> {
+/**
+ * Get all the infos about the specified game
+ * @param database the database
+ * @param gameId the game we want to get all the infos
+ * @param languageId the id of the language to return all the infos into
+ */
+export async function getFullGame(database: Sqlite3.Database, gameId: number, languageId: number = 1): Promise<Game> {
 	const game: Promise<any> = new Promise<any>((resolve, reject): void => {
-		database.get(Statements.getMinLocalizedGame,
+		database.get(Statements.getLocalizedFullGames(Statements.getGameId()),
 			{
 				$gameId: gameId,
 				$languageId: languageId,
@@ -25,7 +31,7 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 			});
 	});
 	const types: Promise<GameType[]> = new Promise<GameType[]>((resolve, reject): void => {
-		database.all(Statements.getLocalizedTypes,
+		database.all(Statements.getLocalizedTypes(Statements.getGameTypes()),
 			{
 				$gameId: gameId,
 				$languageId: languageId,
@@ -38,7 +44,7 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 			});
 	});
 	const categories: Promise<GameCategory[]> = new Promise<GameCategory[]>((resolve, reject): void => {
-		database.all(Statements.getLocalizedCategories,
+		database.all(Statements.getLocalizedCategories(Statements.getGameCategories()),
 			{
 				$gameId: gameId,
 				$languageId: languageId,
@@ -51,7 +57,7 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 			});
 	});
 	const pictures: Promise<GamePicture[]> = new Promise<GamePicture[]>((resolve, reject): void => {
-		database.all(Statements.getPictures,
+		database.all(Statements.getGamePictures(),
 			{
 				$gameId: gameId,
 			},
@@ -63,7 +69,7 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 			});
 	});
 	const publishers: Promise<Publisher[]> = new Promise<Publisher[]>((resolve, reject): void => {
-		database.all(Statements.getPublishers,
+		database.all(Statements.getPublishersNames(Statements.getGamePublishers()),
 			{
 				$gameId: gameId,
 			},
@@ -75,7 +81,7 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 			});
 	});
 	const awards: Promise<GameAward[]> = new Promise<GameAward[]>((resolve, reject): void => {
-		database.all(Statements.getAwards,
+		database.all(Statements.getGameAwards(),
 			{
 				$gameId: gameId,
 			},
@@ -87,7 +93,7 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 			});
 	});
 	const languages: Promise<Language[]> = new Promise<Language[]>((resolve, reject): void => {
-		database.all(Statements.getLocalizedLanguages,
+		database.all(Statements.getGameLocalizedLanguages(),
 			{
 				$gameId : gameId,
 				$languageId : languageId,
@@ -109,11 +115,26 @@ export async function game(database: Sqlite3.Database, gameId: number, languageI
 	return await game;
 }
 
-export async function popularGames(database: Sqlite3.Database, languageId: number, userId: number | null): Promise<Game[]> {
+/**
+ * Get a list of the popular games
+ * @param database the database
+ * @param languageId the id of the language to return all the infos into
+ * @param userId the id of the logged in user (to remove the games he already owns)
+ */
+export async function getPopularGames(database: Sqlite3.Database, languageId: number, userId: number | null): Promise<Game[]> {
 	return new Promise<Game[]>((resolve, reject): void => {
-		database.all(Statements.getLocalizedMinGames(Statements.getPopularGames(!!userId)),
+		database.all(
+			Statements.getLocalizedMinGames(
+				Statements.getMaxNumberGames(
+					Statements.getGamesInNotIn(
+						Statements.getPopularGames(),
+						Statements.getUserGamesCollection(),
+					),
+				),
+			),
 			{
 				$languageId: languageId,
+				$limit: 20,
 				$time: Date.now() - (1000 * 60 * 60 * 24 * 7),
 				$userId: userId,
 			},
@@ -126,12 +147,53 @@ export async function popularGames(database: Sqlite3.Database, languageId: numbe
 	});
 }
 
-export async function newGames(database: Sqlite3.Database, languageId: number): Promise<Game[]> {
+export async function getNewGames(database: Sqlite3.Database, languageId: number, userId: number | null): Promise<Game[]> {
 	return new Promise<Game[]>((resolve, reject): void => {
-		database.all(Statements.getLocalizedMinGames(Statements.getNewGames()),
+		console.log(Statements.getLocalizedMinGames(
+			Statements.getMaxNumberGames(
+				Statements.getGamesInNotIn(
+					Statements.getNewGames(),
+					Statements.getUserGamesCollection(),
+				),
+			),
+		));
+		database.all(
+			Statements.getLocalizedMinGames(
+				Statements.getMaxNumberGames(
+					Statements.getGamesInNotIn(
+						Statements.getNewGames(),
+						Statements.getUserGamesCollection(),
+					),
+				),
+			),
 			{
 				$languageId: languageId,
+				$limit: 20,
 				$time: Date.now() - (1000 * 60 * 60 * 24 * 7),
+				$userId: userId,
+			},
+			(err: Error | null, rows: Game[]): void => {
+				if (err) {
+					reject(err);
+				}
+				resolve(rows);
+			});
+	});
+}
+
+export async function getGamesFreindsPlaying(database: Sqlite3.Database, languageId: number, userId: number | null): Promise<Game[]> {
+	return new Promise<Game[]>((resolve, reject): void => {
+		database.all(Statements.getLocalizedMinGames(
+						Statements.getGamesInNotIn(
+							Statements.getUsersGamesCollection(
+								Statements.getUserFriends(),
+							),
+							Statements.getUserGamesCollection(),
+						),
+					),
+			{
+				$languageId: languageId,
+				$userId: userId,
 			},
 			(err: Error | null, rows: Game[]): void => {
 				if (err) {

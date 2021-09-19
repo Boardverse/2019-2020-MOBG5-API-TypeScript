@@ -1,18 +1,18 @@
-import { Achievement } from "./Achievement";
 import { Game } from "./Game";
-import { Review } from "./Review";
+import { UserGameAchievement } from "./GameAchievement";
+import { UserGameReview } from "./GameReview";
 
 export interface User {
 	id: number;
 	name: string;
 	joinedTimestamp: number;
-	icon: URL;
+	iconURL: string;
 
 	friends: User[];
 
 	collection: Game[];
-	whishlist: Game[];
+	wishlist: Game[];
 	played: Game[];
-	reviews: Review[];
-	achievements: Achievement[];
+	reviews: UserGameReview[];
+	achievements: UserGameAchievement[];
 }
